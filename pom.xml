@@ -40,7 +40,7 @@
 	<developers>
 		<developer>
 			<name>
-				YefriGonzalez
+				TU_NOMBRE
 			</name>
 		</developer>
 	</developers>
@@ -49,12 +49,13 @@
 			scm:git:git://github.com/YefriGonzalez/sa-events-contracts.git
 		</connection>
 		<developerConnection>
-			scm:git:ssh://github.com/YefriGonzalez/sa-events-contracts.git
+			scm:git:ssh://git@github.com/YefriGonzalez/sa-events-contracts.git
 		</developerConnection>
 		<url>
 			https://github.com/YefriGonzalez/sa-events-contracts
 		</url>
 	</scm>
+	<!-- Java 21 -->
 	<properties>
 		<maven.compiler.release>
 			21
@@ -65,6 +66,23 @@
 	</properties>
 	<build>
 		<plugins>
+			<!-- Java Compiler -->
+			<plugin>
+				<groupId>
+					org.apache.maven.plugins
+				</groupId>
+				<artifactId>
+					maven-compiler-plugin
+				</artifactId>
+				<version>
+					3.14.1
+				</version>
+				<configuration>
+					<release>
+						21
+					</release>
+				</configuration>
+			</plugin>
 			<!-- Sources JAR -->
 			<plugin>
 				<groupId>
