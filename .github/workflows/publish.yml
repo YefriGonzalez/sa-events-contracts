@@ -48,6 +48,16 @@ jobs:
           </settings>
           EOF
 
+      - name: Inspect Central bundle
+        if: always()
+        run: |
+          echo "=== Staging files ==="
+          find target/central-staging -type f -print 2>/dev/null | sort || true
+
+          echo "=== Bundle contents ==="
+          if [ -f target/central-publishing/central-bundle.zip ]; then
+            unzip -l target/central-publishing/central-bundle.zip
+          fi
       - name: Publish
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
