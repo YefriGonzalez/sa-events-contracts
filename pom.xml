@@ -185,15 +185,28 @@
 				<extensions>
 					true
 				</extensions>
+				<!--
+				<configuration>
+				<publishingServerId>
+				central
+				</publishingServerId>
+				<autoPublish>
+				true
+				</autoPublish>
+				<waitUntil>
+				published
+				</waitUntil>
+				</configuration>
+				-->
 				<configuration>
 					<publishingServerId>
 						central
 					</publishingServerId>
 					<autoPublish>
-						true
+						false
 					</autoPublish>
 					<waitUntil>
-						published
+						uploaded
 					</waitUntil>
 				</configuration>
 			</plugin>
