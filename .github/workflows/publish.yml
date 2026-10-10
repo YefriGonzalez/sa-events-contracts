@@ -47,26 +47,6 @@ jobs:
             </servers>
           </settings>
           EOF
-      - name: Inspect Central bundle
-        if: always()
-        run: |
-          echo "=== Project POM ==="
-          ls -l pom.xml target/events-contracts-1.0.0.pom 2>/dev/null || true
-
-          echo "=== Staged POMs ==="
-          find target/central-staging -type f -name '*.pom' -print 2>/dev/null || true
-
-          echo "=== Local metadata ==="
-          find target/central-staging -type f \
-            -name 'maven-metadata-local.xml' -print 2>/dev/null || true
-
-          echo "=== All staged files ==="
-          find target/central-staging -type f -print 2>/dev/null | sort || true
-
-          echo "=== ZIP contents ==="
-          if [ -f target/central-publishing/central-bundle.zip ]; then
-            unzip -l target/central-publishing/central-bundle.zip
-          fi
       - name: Publish
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
