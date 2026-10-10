@@ -24,7 +24,7 @@
 		sa-events-contracts
 	</artifactId>
 	<version>
-		1.0.1
+		1.0.2
 	</version>
 	<name>
 		SA Events Contracts
@@ -74,6 +74,22 @@
 			21
 		</maven.compiler.release>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>
+				com.fasterxml.jackson.core
+			</groupId>
+			<artifactId>
+				jackson-databind
+			</artifactId>
+			<version>
+				2.21.7
+			</version>
+			<scope>
+				compile
+			</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<!-- Sources JAR -->
