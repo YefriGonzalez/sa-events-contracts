@@ -47,14 +47,15 @@ jobs:
             </servers>
           </settings>
           EOF
-      - name: Inspect bundle
-        env:
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          mvn --batch-mode clean deploy -DskipTests -DskipPublishing=true
-          unzip -l target/central-publishing/central-bundle.zip
+
       - name: Publish
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mvn --batch-mode clean deploy
+
+      - name: Inspect bundle on failure
+        if: failure()
+        run: |
+          unzip -l target/central-publishing/central-bundle.zip || true
+          find target/central-staging -type f || true
