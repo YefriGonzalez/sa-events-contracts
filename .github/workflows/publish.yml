@@ -47,21 +47,25 @@ jobs:
             </servers>
           </settings>
           EOF
-      - name: Publish (build bundle)
+      - name: Build bundle
         continue-on-error: true
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn --batch-mode clean deploy
 
-      - name: Fix bundle and upload
+      - name: Clean bundle and upload
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
         run: |
           cd target/central-publishing
+          rm -rf fixed central-bundle-fixed.zip
           mkdir fixed && cd fixed
           unzip -q ../central-bundle.zip
           find . -name "maven-metadata*" -delete
+          find . -name "_remote.repositories*" -delete
+          unzip -l ../central-bundle.zip | wc -l
+          find . -type f | sort
           zip -qr ../central-bundle-fixed.zip .
           cd ..
           TOKEN=$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 -w0)
