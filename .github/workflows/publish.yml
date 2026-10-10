@@ -23,6 +23,21 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Set up Maven 3.9.16
+        run: |
+          MAVEN_VERSION=3.9.16
+
+          curl -fsSL \
+            "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${MAVEN_VERSION}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+            -o /tmp/apache-maven.tar.gz
+
+          tar -xzf /tmp/apache-maven.tar.gz -C /tmp
+
+          echo "/tmp/apache-maven-${MAVEN_VERSION}/bin" >> "$GITHUB_PATH"
+
+      - name: Verify Maven version
+        run: mvn --version
+
       - name: Import GPG key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -48,18 +63,29 @@ jobs:
           </settings>
           EOF
 
+      - name: Publish
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: mvn --batch-mode clean deploy
+
       - name: Inspect Central bundle
         if: always()
         run: |
+          echo "=== Maven version ==="
+          mvn --version || true
+
           echo "=== Staging files ==="
           find target/central-staging -type f -print 2>/dev/null | sort || true
+
+          echo "=== Metadata files ==="
+          find target/central-staging \
+            -name 'maven-metadata-local.xml' \
+            -o -name 'maven-metadata-central-staging.xml' \
+            2>/dev/null || true
 
           echo "=== Bundle contents ==="
           if [ -f target/central-publishing/central-bundle.zip ]; then
             unzip -l target/central-publishing/central-bundle.zip
+          else
+            echo "No se encontró central-bundle.zip"
           fi
-      - name: Publish
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          mvn --batch-mode clean deploy
