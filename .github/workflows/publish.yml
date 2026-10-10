@@ -47,16 +47,25 @@ jobs:
             </servers>
           </settings>
           EOF
-      - name: Clean local Maven metadata
-        run: rm -rf ~/.m2/repository/io/github/yefrigonzalez/sa-events-contracts
-      - name: Publish
+      - name: Publish (build bundle)
+        continue-on-error: true
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          mvn --batch-mode clean deploy
+        run: mvn --batch-mode clean deploy
 
-      - name: Inspect bundle on failure
-        if: failure()
+      - name: Fix bundle and upload
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
         run: |
-          unzip -l target/central-publishing/central-bundle.zip || true
-          find target/central-staging -type f || true
+          cd target/central-publishing
+          mkdir fixed && cd fixed
+          unzip -q ../central-bundle.zip
+          find . -name "maven-metadata*" -delete
+          zip -qr ../central-bundle-fixed.zip .
+          cd ..
+          TOKEN=$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 -w0)
+          curl --fail-with-body -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -F "bundle=@central-bundle-fixed.zip" \
+            "https://central.sonatype.com/api/v1/publisher/upload?name=sa-events-contracts-1.0.0&publishingType=AUTOMATIC"
