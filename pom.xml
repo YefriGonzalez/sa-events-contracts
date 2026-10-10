@@ -27,10 +27,10 @@
 		1.0.0
 	</version>
 	<name>
-		SA Security
+		SA Events Contracts
 	</name>
 	<description>
-		Shared JWT security library for SA microservices
+		Shared event contracts for SA microservices
 	</description>
 	<url>
 		https://github.com/YefriGonzalez/sa-events-contracts

@@ -47,7 +47,12 @@ jobs:
             </servers>
           </settings>
           EOF
-
+      - name: Inspect bundle
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn --batch-mode clean verify -DskipTests
+          find target -name "central-bundle.zip" -o -path "*central-staging*" -type f | head -50
       - name: Publish
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
