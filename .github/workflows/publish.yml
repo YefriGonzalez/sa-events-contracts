@@ -51,8 +51,8 @@ jobs:
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn --batch-mode clean verify -DskipTests
-          find target -name "central-bundle.zip" -o -path "*central-staging*" -type f | head -50
+          mvn --batch-mode clean deploy -DskipTests -DskipPublishing=true
+          unzip -l target/central-publishing/central-bundle.zip
       - name: Publish
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
