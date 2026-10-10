@@ -4,7 +4,7 @@
 		4.0.0
 	</modelVersion>
 	<groupId>
-		com.sa
+		io.github.yefrigonzalez
 	</groupId>
 	<artifactId>
 		events-contracts
