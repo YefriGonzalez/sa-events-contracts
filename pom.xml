@@ -3,6 +3,18 @@
 	<modelVersion>
 		4.0.0
 	</modelVersion>
+	<parent>
+		<groupId>
+			org.springframework.boot
+		</groupId>
+		<artifactId>
+			spring-boot-starter-parent
+		</artifactId>
+		<version>
+			4.1.1
+		</version>
+		<relativePath />
+	</parent>
 	<groupId>
 		io.github.yefrigonzalez
 	</groupId>
@@ -185,28 +197,15 @@
 				<extensions>
 					true
 				</extensions>
-				<!--
-				<configuration>
-				<publishingServerId>
-				central
-				</publishingServerId>
-				<autoPublish>
-				true
-				</autoPublish>
-				<waitUntil>
-				published
-				</waitUntil>
-				</configuration>
-				-->
 				<configuration>
 					<publishingServerId>
 						central
 					</publishingServerId>
 					<autoPublish>
-						false
+						true
 					</autoPublish>
 					<waitUntil>
-						uploaded
+						published
 					</waitUntil>
 				</configuration>
 			</plugin>

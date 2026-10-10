@@ -23,21 +23,6 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Set up Maven 3.9.16
-        run: |
-          MAVEN_VERSION=3.9.16
-
-          curl -fsSL \
-            "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${MAVEN_VERSION}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
-            -o /tmp/apache-maven.tar.gz
-
-          tar -xzf /tmp/apache-maven.tar.gz -C /tmp
-
-          echo "/tmp/apache-maven-${MAVEN_VERSION}/bin" >> "$GITHUB_PATH"
-
-      - name: Verify Maven
-        run: mvn --version
-
       - name: Import GPG key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -63,36 +48,8 @@ jobs:
           </settings>
           EOF
 
-      - name: Build and upload bundle without auto-publishing
-        id: publish
-        continue-on-error: true
+      - name: Publish
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: mvn --batch-mode clean deploy
-
-      - name: Inspect Central bundle
-        if: always()
         run: |
-          echo "=== Project POM ==="
-          ls -l pom.xml
-
-          echo "=== Staged POM files ==="
-          find target/central-staging -type f -name '*.pom' -print 2>/dev/null || true
-
-          echo "=== Metadata files ==="
-          find target/central-staging -type f \
-            -name 'maven-metadata*.xml' -print 2>/dev/null || true
-
-          echo "=== Staging directory ==="
-          find target/central-staging -type f -print 2>/dev/null | sort || true
-
-          echo "=== ZIP contents ==="
-          if [ -f target/central-publishing/central-bundle.zip ]; then
-            unzip -l target/central-publishing/central-bundle.zip
-          else
-            echo "Bundle ZIP not found"
-          fi
-
-      - name: Fail if upload or validation failed
-        if: steps.publish.outcome == 'failure'
-        run: exit 1
+          mvn --batch-mode clean deploy
