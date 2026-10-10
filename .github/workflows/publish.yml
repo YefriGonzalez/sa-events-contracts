@@ -1,0 +1,55 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
+      - name: Configure Maven Central credentials
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+        run: |
+          mkdir -p ~/.m2
+
+          cat > ~/.m2/settings.xml <<EOF
+          <settings>
+            <servers>
+              <server>
+                <id>central</id>
+                <username>${CENTRAL_USERNAME}</username>
+                <password>${CENTRAL_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+
+      - name: Publish
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn --batch-mode clean deploy
